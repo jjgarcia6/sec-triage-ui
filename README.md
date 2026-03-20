@@ -55,6 +55,35 @@ Notas:
 - `FRONTEND_URLS` se usa para CORS.
 - `MONGODB_CLUSTER` debe incluir el host del cluster (ej. `cluster0.xxxxx.mongodb.net`).
 
+### Frontend (`apps/frontend/.env.local`)
+
+El frontend requiere variables de Firebase Web SDK para login:
+
+```env
+VITE_FIREBASE_API_KEY=your-web-api-key
+VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-project-id
+VITE_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
+VITE_FIREBASE_APP_ID=1:123456789:web:abcdef123456
+```
+
+Notas:
+
+- Todas las variables del frontend DEBEN iniciar con `VITE_`.
+- Debes reiniciar `npm run dev` despues de crear o editar `.env.local`.
+- No usar credenciales de Service Account (Admin SDK) en frontend.
+- La API key web de Firebase no es secreta, pero DEBE restringirse por dominio en Google Cloud Console.
+
+### Firebase Authentication (Google)
+
+Para habilitar el login con Google:
+
+1. Firebase Console -> Authentication -> Get started.
+2. Sign-in method -> Google -> Enable.
+3. Authentication -> Settings -> Authorized domains: agrega `localhost` y `127.0.0.1`.
+4. Verifica que la API key usada en `.env.local` pertenezca al mismo `projectId`.
+
 ## Instalacion
 
 ### 1) Backend
@@ -150,3 +179,10 @@ Consulta `docs/data-dictionary.md` para:
   - Verifica `FRONTEND_URLS` en `.env`.
 - Error 422 en create:
   - Revisa enums y formato del payload contra el diccionario de datos.
+- Error `auth/invalid-api-key` en frontend:
+  - Revisa `apps/frontend/.env.local` y confirma que `VITE_FIREBASE_API_KEY` sea valida.
+  - Reinicia Vite (`npm run dev`) para recargar variables.
+- Error `CONFIGURATION_NOT_FOUND` al hacer sign-in con Google:
+  - Inicializa Firebase Authentication en el proyecto.
+  - Habilita proveedor Google y dominios autorizados (`localhost`, `127.0.0.1`).
+  - Verifica restricciones de API key en Google Cloud.

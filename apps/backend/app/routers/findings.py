@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from app.core.errors import ConflictError, DomainError, NotFoundError, ValidationError
+from app.core.auth import get_current_user
 from app.db.mongo import get_database_dependency
 from app.models.finding import FindingRepository
 from app.schemas.finding import (
@@ -18,7 +19,11 @@ from app.schemas.finding import (
 )
 from app.services.finding_service import FindingService
 
-router = APIRouter(prefix="/api/findings", tags=["findings"])
+router = APIRouter(
+    prefix="/api/findings",
+    tags=["findings"],
+    dependencies=[Depends(get_current_user)]
+)
 
 
 async def get_finding_service(

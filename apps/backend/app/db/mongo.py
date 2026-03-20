@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     mongodb_cluster: str
     mongodb_db_name: str
     frontend_urls: str
+    firebase_project_id: str | None = None
+    firebase_credentials_path: str | None = None
 
     @property
     def mongodb_uri(self) -> str:
